@@ -90,7 +90,7 @@ func (c *Copier) Copy(man ManipulatorFunc) error {
 		}
 		switch c.FileType {
 		case JSON:
-			content, err = json.Marshal(x)
+			content, err = json.MarshalIndent(x, "", "\t")
 			if err != nil {
 				c.errors = append(c.errors, err)
 				continue

@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"strings"
 
 	"github.com/Revolyssup/useful-go-func/copyjsonyaml/pkg"
 )
@@ -13,7 +12,8 @@ var (
 	Filepath string
 	RootDir  string
 	Filename string
-	KeyVal   []pkg.KeyValPair
+	Key      string
+	// KeyVal   []pkg.KeyValPair
 )
 
 //Main function to test out stuff.
@@ -21,8 +21,11 @@ func main() {
 	copier := pkg.NewCopier(Filepath, pkg.JSON, RootDir)
 	err := copier.Copy(func(env pkg.Env) (string, []pkg.KeyValPair) {
 		filename := Filename
-		pairs := KeyVal
-		return filename, pairs
+
+		return filename, []pkg.KeyValPair{
+			{Key: pkg.Key(Key),
+				Val: env.ParentDirectoryName},
+		}
 	})
 	if err != nil {
 		fmt.Println(err.Error())
@@ -49,17 +52,23 @@ func init() {
 	if os.Args[3] == "" {
 		log.Fatal("please pass file name as third argument " + usage)
 	}
+
 	Filename = os.Args[3]
-	for _, arg := range os.Args[4:] {
-		kv := strings.Split(arg, "=")
-		if len(kv) < 2 {
-			log.Fatal("please pass key val pair as \"key=value\"" + usage)
-		}
-		k := kv[0]
-		v := kv[1]
-		KeyVal = append(KeyVal, pkg.KeyValPair{
-			Key: pkg.Key(k),
-			Val: pkg.Val(v),
-		})
+	if os.Args[4] == "" {
+		log.Fatal("please pass file name as third argument " + usage)
 	}
+
+	Key = os.Args[4]
+	// for _, arg := range os.Args[4:] {
+	// 	kv := strings.Split(arg, "=")
+	// 	if len(kv) < 2 {
+	// 		log.Fatal("please pass key val pair as \"key=value\"" + usage)
+	// 	}
+	// 	k := kv[0]
+	// 	v := kv[1]
+	// 	// KeyVal = append(KeyVal, pkg.KeyValPair{
+	// 	// 	Key: pkg.Key(k),
+	// 	// 	Val: pkg.Val(v),
+	// 	// })
+	// }
 }
